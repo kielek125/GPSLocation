@@ -20,9 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.malavero.trackyourchild.gpslocation.R;
 import com.malavero.trackyourchild.gpslocation.helpers.StringHelper;
 import com.malavero.trackyourchild.gpslocation.services.GPSService;
-import com.malavero.trackyourchild.gpslocation.R;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;

@@ -1,4 +1,5 @@
 <resources>
+    <!--Core -->
     <string name="app_name">GPS Location</string>
     <string name="app_enable_service">Start service</string>
     <string name="app_disable_service">Stop service</string>
@@ -9,4 +10,17 @@
     <string name="app_service_enable_description">Localization service has been activated</string>
     <string name="app_service_disable_description">Localization service has been turned off</string>
     <string name="app_settings">Settings</string>
+
+    <!--Registration and Sign up-->
+    <string name="app_registration_title">Android Login and Registration</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_name">Fullname</string>
+    <string name="btn_login">LOGIN</string>
+    <string name="btn_register">REGISTER</string>
+    <string name="btn_link_to_register">Not a member? Sign up now.</string>
+    <string name="btn_link_to_login">Already registered! Login Me.</string>
+    <string name="welcome">Welcome</string>
+    <string name="btn_logout">LOGOUT</string>
+    <string name="name">Fullname</string>
 </resources>
