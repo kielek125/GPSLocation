@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GPS Location</string>
+    <string name="app_enable_service">Włącz</string>
+    <string name="app_disable_service">Wyłącz</string>
+    <string name="app_coordinates_label">Współrzędne:</string>
+    <string name="app_coordinates_latitude">Szerokość:</string>
+    <string name="app_coordinates_longitude">Długość:</string>
+    <string name="app_coordinates_altitude">Wysokość:</string>
+    <string name="app_service_enable_description">Usługa lokalizacyjna została włączona</string>
+    <string name="app_service_disable_description">Usługa lokalizacyjna została wyłączona</string>
+    <string name="app_settings">Ustawienia</string>
+</resources>

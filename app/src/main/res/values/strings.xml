@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">GPS Location</string>
+    <string name="app_enable_service">Start service</string>
+    <string name="app_disable_service">Stop service</string>
+    <string name="app_coordinates_label">Coordinates:</string>
+    <string name="app_coordinates_latitude">Latitude:</string>
+    <string name="app_coordinates_longitude">Longitude:</string>
+    <string name="app_coordinates_altitude">Altitude:</string>
+    <string name="app_service_enable_description">Localization service has been activated</string>
+    <string name="app_service_disable_description">Localization service has been turned off</string>
+    <string name="app_settings">Settings</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.malavero.trackyourchild.gpslocation;
+package com.malavero.trackyourchild.gpslocation.utils;
 
 
 import org.apache.http.conn.ClientConnectionManager;

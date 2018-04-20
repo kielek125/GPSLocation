@@ -1,4 +1,6 @@
-package com.malavero.trackyourchild.gpslocation;
+package com.malavero.trackyourchild.gpslocation.utils;
+
+import com.malavero.trackyourchild.gpslocation.helpers.StringHelper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -9,7 +11,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
@@ -156,7 +157,7 @@ public class RestClient {
             if (entity != null) {
 
                 InputStream instream = entity.getContent();
-                response = convertStreamToString(instream);
+                response = StringHelper.convertStreamToString(instream);
 
                 // Closing the input stream will trigger connection release
                 instream.close();
@@ -169,27 +170,5 @@ public class RestClient {
             client.getConnectionManager().shutdown();
             e.printStackTrace();
         }
-    }
-
-    private static String convertStreamToString(InputStream is) {
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        StringBuilder sb = new StringBuilder();
-
-        String line = null;
-        try {
-            while ((line = reader.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                is.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return sb.toString();
     }
 }

@@ -1,4 +1,4 @@
-package com.malavero.trackyourchild.gpslocation;
+package com.malavero.trackyourchild.gpslocation.services;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -34,7 +34,7 @@ public class GPSService extends Service {
             @Override
             public void onLocationChanged(Location location) {
                 Intent i = new Intent("location_update");
-                i.putExtra("Coordinates",location.getLongitude()+" "+location.getLatitude());
+                i.putExtra("Coordinates",location.getLongitude()+" "+location.getLatitude()+" "+location.getAltitude());
                 sendBroadcast(i);
             }
 
