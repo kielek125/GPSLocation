@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver broadcastReceiver;
     private SessionManager session;
     private String token;
-    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        //restSender = new RestSender(login,password);
         textView = (TextView) findViewById(R.id.coordinateTextView);
 
         tv_latitude = (TextView) findViewById(R.id.tv_coordinates_latitude_values);
@@ -71,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         session = new SessionManager(getApplicationContext());
         toggleButton = (ToggleButton) findViewById(R.id.tb_service);
         token = session.getToken();
-        onStartCommand();
 
         if (!runtimePermission())
             enableToggleButton();
@@ -245,11 +242,6 @@ public class MainActivity extends AppCompatActivity {
         }) {
 
             @Override
-            protected Response parseNetworkResponse(NetworkResponse response) {
-                return null;
-            }
-
-            @Override
             public Map<String, String> getHeaders() throws AuthFailureError
             {
                 Map<String, String> params = new HashMap<String, String>();
@@ -270,7 +262,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        // Adding request to request queue
         AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
     }
 }

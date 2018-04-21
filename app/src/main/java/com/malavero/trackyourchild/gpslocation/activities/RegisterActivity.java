@@ -37,8 +37,6 @@ public class RegisterActivity extends Activity {
     private EditText inputPassword;
     private ProgressDialog pDialog;
     private SessionManager session;
-    private RestSender restSender;
-    private String message;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
