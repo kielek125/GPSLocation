@@ -35,7 +35,6 @@ import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
 import com.malavero.trackyourchild.gpslocation.services.GPSService;
-import com.malavero.trackyourchild.gpslocation.utils.RestSender;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -228,26 +227,24 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error)
             {
                 //TODO tutaj zwraca nam błąd jeżeli serwer nie odpowiada lub coś tam
+                try
+                {
                 String body;
-                String statusCode = String.valueOf(error.networkResponse.statusCode);
                 //get response body and parse with appropriate encoding
                 if(error.networkResponse.data!=null) {
-                    try
-                    {
+
                         body = new String(error.networkResponse.data,"UTF-8");
                         JSONObject jObj = new JSONObject(body);
                     }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                    }
+
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }) {
 
-            @Override
-            protected Response parseNetworkResponse(NetworkResponse response) {
-                return null;
-            }
+
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError
@@ -255,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 if(token != null)
                     params.put("Authorization", token);
-                return super.getHeaders();
+                return params;
             }
 
             @Override
@@ -276,27 +273,8 @@ public class MainActivity extends AppCompatActivity {
 
     public int onStartCommand() {
         mHandler = new android.os.Handler();
-        setCoords();
         return START_STICKY;
     }
 
-    private void setCoords() {
-        try
-        {
-            sendCoordinates("10","12");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        scheduleNext();
-    }
 
-    private void scheduleNext() {
-        mHandler.postDelayed(new Runnable() {
-            public void run()
-            {
-                setCoords();
-            }
-        }, 30000);
-    }
 }
