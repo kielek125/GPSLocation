@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onReceive(Context context, Intent intent) {
                         final String[] s = intent.getExtras().get("Coordinates").toString().split(" ");
-                        //setCoordinatesText(intent.getExtras().get("Coordinates").toString());
+                        setCoordinatesText(intent.getExtras().get("Coordinates").toString());
 
                         AsyncTask.execute(new Runnable() {
                             @Override
