@@ -9,22 +9,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.malavero.trackyourchild.gpslocation.R;
-import com.malavero.trackyourchild.gpslocation.helpers.SQLiteHandler;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = RegisterActivity.class.getSimpleName();
@@ -34,7 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText inputPassword;
     private ProgressDialog pDialog;
     private SessionManager session;
-    private SQLiteHandler db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         // Progress dialog
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
-
-        // SQLite database handler
-        db = new SQLiteHandler(getApplicationContext());
 
         // Session manager
         session = new SessionManager(getApplicationContext());
@@ -117,32 +110,12 @@ public class LoginActivity extends AppCompatActivity {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.has("error");
 
-                    // Check for error node in json
                     if (!error) {
-                        // user successfully logged in
-                        // Create login session
                         session.setLogin(true);
 
-                        // Now store the user in SQLite
-                        //String uid = jObj.getString("uid");
-
-                        //JSONObject user = jObj.getJSONObject("user");
-                        //String name = user.getString("name");
-                        //String email = user.getString("email");
-                        //String created_at = user.getString("created_at");
-
-                        // Inserting row in users table
-                        //db.addUser(name, email, uid, created_at);
-
-                        // Launch main activity
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
-                    } else
-                        {
-                        // Error in login. Get the error message
-                        //String errorMsg = jObj.getString("error_msg");
-                        //Toast.makeText(LoginActivity.this,errorMsg, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error

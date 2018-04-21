@@ -21,10 +21,24 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.malavero.trackyourchild.gpslocation.R;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
+import com.malavero.trackyourchild.gpslocation.services.AppConfig;
+import com.malavero.trackyourchild.gpslocation.services.AppController;
 import com.malavero.trackyourchild.gpslocation.services.GPSService;
 import com.malavero.trackyourchild.gpslocation.utils.RestSender;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private RestSender restSender;
     private String login, password;
     private SessionManager session;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +87,13 @@ public class MainActivity extends AppCompatActivity {
                 broadcastReceiver = new BroadcastReceiver() {
                     @Override
                     public void onReceive(Context context, Intent intent) {
+                        final String[] s = intent.getExtras().get("Coordinates").toString().split(" ");
                         setCoordinatesText(intent.getExtras().get("Coordinates").toString());
+
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
-                                restSender.sendDataToServer(); // TODO tutaj będzie strzelało do API na podstawie loginu i hasla
+                                sendCoordinates(s[0],s[1]);
                             }
                         });
                     }
@@ -174,5 +191,70 @@ public class MainActivity extends AppCompatActivity {
             unregisterReceiver(broadcastReceiver);
     }
 
+    private void sendCoordinates(final String longitude, final String latitude) {
+        String tag_string_req = "req_login";
+
+        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.URL_UPDATE, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.has("error");
+
+                    if (!error) {
+                        token = jObj.get("Authorization").toString();
+                        //TODO mamy tokena
+
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error)
+            {
+                //TODO tutaj zwraca nam błąd jeżeli serwer nie odpowiada lub coś tam
+//                String body;
+//                String statusCode = String.valueOf(error.networkResponse.statusCode);
+//                //get response body and parse with appropriate encoding
+//                if(error.networkResponse.data!=null) {
+//                    try
+//                    {
+//                        body = new String(error.networkResponse.data,"UTF-8");
+//                        JSONObject jObj = new JSONObject(body);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                if(!token.equals(""))
+                    params.put("Authorization", token);
+                return super.getHeaders();
+            }
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+
+                params.put("longitude", longitude);
+                params.put("latitude", latitude);
+                params.put("device_name", Build.ID);
+                return params;
+            }
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
 
 }

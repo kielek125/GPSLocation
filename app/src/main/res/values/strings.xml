@@ -13,10 +13,10 @@
     <string name="action_logoff">Logoff</string>
 
     <!--Registration and Sign up-->
-    <string name="app_registration_title">Register</string>
+    <string name="app_registration_title">Track your child</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="hint_name">Fullname</string>
+    <string name="hint_name">Login</string>
     <string name="btn_login">LOGIN</string>
     <string name="btn_register">REGISTER</string>
     <string name="btn_link_to_register">Not a member? Sign up now.</string>

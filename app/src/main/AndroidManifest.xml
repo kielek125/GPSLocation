@@ -15,11 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
+
         <activity
             android:name=".activities.LoginActivity"
             android:label="@string/app_registration_title"
             android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,9 +33,11 @@
             android:label="@string/app_registration_title"
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
         />
 
-        <activity android:name=".activities.MainActivity"/>
+        <activity android:name=".activities.MainActivity"
+            android:screenOrientation="portrait"/>
         <service android:name=".services.GPSService" />
 
 
