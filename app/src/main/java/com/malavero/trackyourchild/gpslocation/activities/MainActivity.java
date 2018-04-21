@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        //restSender = new RestSender(login,password);
         textView = (TextView) findViewById(R.id.coordinateTextView);
 
         tv_latitude = (TextView) findViewById(R.id.tv_coordinates_latitude_values);
@@ -71,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
         session = new SessionManager(getApplicationContext());
         toggleButton = (ToggleButton) findViewById(R.id.tb_service);
         token = session.getToken();
-        onStartCommand();
 
         if (!runtimePermission())
             enableToggleButton();
@@ -211,10 +209,10 @@ public class MainActivity extends AppCompatActivity {
                     JSONObject jObj = new JSONObject(response);
                     boolean error = jObj.has("error");
 
-                    if (!error) {
-                        token = jObj.get("Authorization").toString();
+                    if (!error)
+                    {
+                        //token = jObj.get("Authorization").toString();
                         //TODO mamy tokena
-
                     }
                 } catch (JSONException e) {
                     // JSON error
@@ -227,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error)
             {
-                //TODO tutaj zwraca nam błąd jeżeli serwer nie odpowiada lub coś tam
                 String body;
                 String statusCode = String.valueOf(error.networkResponse.statusCode);
                 //get response body and parse with appropriate encoding
@@ -245,58 +242,24 @@ public class MainActivity extends AppCompatActivity {
         }) {
 
             @Override
-            protected Response parseNetworkResponse(NetworkResponse response) {
-                return null;
-            }
-
-            @Override
             public Map<String, String> getHeaders() throws AuthFailureError
             {
                 Map<String, String> params = new HashMap<String, String>();
                 if(token != null)
                     params.put("Authorization", token);
-                return super.getHeaders();
+                return params;
             }
 
             @Override
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<String, String>();
-
                 params.put("longitude", longitude);
                 params.put("latitude", latitude);
                 params.put("device_name", Build.ID);
                 return params;
             }
         };
-
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
-    }
-
-    public int onStartCommand() {
-        mHandler = new android.os.Handler();
-        setCoords();
-        return START_STICKY;
-    }
-
-    private void setCoords() {
-        try
-        {
-            sendCoordinates("10","12");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        scheduleNext();
-    }
-
-    private void scheduleNext() {
-        mHandler.postDelayed(new Runnable() {
-            public void run()
-            {
-                setCoords();
-            }
-        }, 30000);
+        AppController.getInstance().addToRequestQueue(stringRequest,tag_string_req);
     }
 }

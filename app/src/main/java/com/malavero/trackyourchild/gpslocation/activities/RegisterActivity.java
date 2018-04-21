@@ -121,7 +121,8 @@ public class RegisterActivity extends Activity {
                     boolean error = jObj.has("error");
                     if (!error) {
                         Toast.makeText(RegisterActivity.this, "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
-                        Utils.delay(3, new Utils.DelayCallback() {
+                        Utils.delay(3, new Utils.DelayCallback()
+                        {
                             @Override
                             public void afterDelay()
                             {
