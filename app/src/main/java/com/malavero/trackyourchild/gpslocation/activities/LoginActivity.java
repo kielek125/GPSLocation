@@ -50,12 +50,10 @@ public class LoginActivity extends AppCompatActivity {
         session = new SessionManager(getApplicationContext());
 
         // Check if user is already logged in or not
-//        if (session.isLoggedIn()) {
-//            // User is already logged in. Take him to main activity
-//            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//            startActivity(intent);
-//            finish();
-//        }
+        if (session.isLoggedIn()) {
+            // User is already logged in. Take him to main activity
+            checkLogin(session.getEmail(),session.getPassword());
+        }
 
         // Login button Click Event
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -89,9 +87,10 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
+
     /**
      * function to verify login details in mysql db
-     * */
+     */
     private void checkLogin(final String email, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -113,6 +112,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (!error) {
                         session.setLogin(true);
                         session.setToken(jObj.getJSONObject("data").getString("token"));
+                        session.setEmail(email);
+                        session.setPassword(password);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
@@ -127,24 +128,20 @@ public class LoginActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error)
-            {
+            public void onErrorResponse(VolleyError error) {
                 String body;
                 String statusCode = String.valueOf(error.networkResponse.statusCode);
                 //get response body and parse with appropriate encoding
-                if(error.networkResponse.data!=null) {
-                    try
-                    {
-                        body = new String(error.networkResponse.data,"UTF-8");
+                if (error.networkResponse.data != null) {
+                    try {
+                        body = new String(error.networkResponse.data, "UTF-8");
                         JSONObject jObj = new JSONObject(body);
                         Log.e(TAG, "Registration Error: " + jObj.get("error"));
                         Toast.makeText(LoginActivity.this, jObj.get("error").toString(), Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
+                } else {
                     Log.e(TAG, "Unknown Error: " + error.getMessage());
                     Toast.makeText(LoginActivity.this, "Unknown error", Toast.LENGTH_LONG).show();
                 }
