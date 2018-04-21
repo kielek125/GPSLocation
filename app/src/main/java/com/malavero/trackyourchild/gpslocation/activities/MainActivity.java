@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<String, String>();
                 if(token != null)
                     params.put("Authorization", token);
-                return super.getHeaders();
+                return params;
             }
 
             @Override
