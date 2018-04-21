@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
-                                restSender.sendDataToServer();
+                                restSender.sendDataToServer(); // TODO tutaj będzie strzelało do API na podstawie loginu i hasla
                             }
                         });
                     }

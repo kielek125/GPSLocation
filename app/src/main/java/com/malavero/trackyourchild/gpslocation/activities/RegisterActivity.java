@@ -19,6 +19,7 @@ import com.malavero.trackyourchild.gpslocation.helpers.SQLiteHandler;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
+import com.malavero.trackyourchild.gpslocation.utils.RestSender;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +38,7 @@ public class RegisterActivity extends Activity {
     private ProgressDialog pDialog;
     private SessionManager session;
     private SQLiteHandler db;
+    private RestSender restSender;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,6 +137,8 @@ public class RegisterActivity extends Activity {
                         // Inserting row in users table
                         db.addUser(name, email, uid, created_at);
 
+                        restSender = new RestSender(name, email, password);
+                        restSender.sendDataToServer(); //TODO walidacja czy juz użytkownik istnieje, API zwróci kod błędu jeśli już taki istenieje
                         Toast.makeText(RegisterActivity.this, "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
 
                         // Launch login activity
