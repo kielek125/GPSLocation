@@ -96,7 +96,6 @@ public class RegisterActivity extends Activity {
         });
 
     }
-
     /**
      * Function to store user in MySQL database will post params(tag, name,
      * email, password) to register url

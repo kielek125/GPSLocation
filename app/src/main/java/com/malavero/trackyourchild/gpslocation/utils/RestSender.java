@@ -16,7 +16,8 @@ import java.io.UnsupportedEncodingException;
  * Created by Kiełson on 21.04.2018.
  */
 
-public class RestSender {
+public class RestSender
+{
     String login;
     String password;
     String mail;

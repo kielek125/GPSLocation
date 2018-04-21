@@ -29,7 +29,6 @@ public final class AppController extends Application {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(this);
         }
-
         return mRequestQueue;
     }
 

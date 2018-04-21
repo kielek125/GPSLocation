@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -23,9 +24,11 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.malavero.trackyourchild.gpslocation.R;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
@@ -40,15 +43,16 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static android.app.Service.START_STICKY;
+
 public class MainActivity extends AppCompatActivity {
 
     private TextView textView, tv_latitude, tv_longitude, tv_altitude, tv_status;
     private ToggleButton toggleButton;
     private BroadcastReceiver broadcastReceiver;
-    private RestSender restSender;
-    private String login, password;
     private SessionManager session;
     private String token;
+    private Handler mHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,16 +61,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-        restSender = new RestSender(login,password);
+        //restSender = new RestSender(login,password);
         textView = (TextView) findViewById(R.id.coordinateTextView);
 
         tv_latitude = (TextView) findViewById(R.id.tv_coordinates_latitude_values);
         tv_longitude = (TextView) findViewById(R.id.tv_coordinates_longitude_values);
         tv_altitude = (TextView) findViewById(R.id.tv_coordinates_altitude_values);
         tv_status = (TextView) findViewById(R.id.tv_status_info);
-
+        session = new SessionManager(getApplicationContext());
         toggleButton = (ToggleButton) findViewById(R.id.tb_service);
-
+        token = session.getToken();
+        onStartCommand();
 
         if (!runtimePermission())
             enableToggleButton();
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onReceive(Context context, Intent intent) {
                         final String[] s = intent.getExtras().get("Coordinates").toString().split(" ");
-                        setCoordinatesText(intent.getExtras().get("Coordinates").toString());
+                        //setCoordinatesText(intent.getExtras().get("Coordinates").toString());
 
                         AsyncTask.execute(new Runnable() {
                             @Override
@@ -102,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception ex) {
 
         }
+
     }
 
     private void setCoordinatesText(String coordinates) {
@@ -148,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("service_enabled", "GPS LOCALIZATION HAS BEEN ENABLED");
                     startService(service);
                     tv_status.setText(getString(R.string.app_service_enable_description));
+
                     //Toast.makeText(MainActivity.this, getString(R.string.app_service_enable_description), Toast.LENGTH_SHORT).show();
                 } else {
                     Intent service = new Intent(getApplicationContext(), GPSService.class);
@@ -191,10 +198,12 @@ public class MainActivity extends AppCompatActivity {
             unregisterReceiver(broadcastReceiver);
     }
 
-    private void sendCoordinates(final String longitude, final String latitude) {
+    private void sendCoordinates(final String longitude, final String latitude)
+    {
         String tag_string_req = "req_login";
 
-        StringRequest strReq = new StringRequest(Request.Method.POST, AppConfig.URL_UPDATE, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest (Request.Method.PUT, AppConfig.URL_UPDATE, new Response.Listener<String>()
+        {
 
             @Override
             public void onResponse(String response) {
@@ -219,24 +228,32 @@ public class MainActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error)
             {
                 //TODO tutaj zwraca nam błąd jeżeli serwer nie odpowiada lub coś tam
-//                String body;
-//                String statusCode = String.valueOf(error.networkResponse.statusCode);
-//                //get response body and parse with appropriate encoding
-//                if(error.networkResponse.data!=null) {
-//                    try
-//                    {
-//                        body = new String(error.networkResponse.data,"UTF-8");
-//                        JSONObject jObj = new JSONObject(body);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                }
+                String body;
+                String statusCode = String.valueOf(error.networkResponse.statusCode);
+                //get response body and parse with appropriate encoding
+                if(error.networkResponse.data!=null) {
+                    try
+                    {
+                        body = new String(error.networkResponse.data,"UTF-8");
+                        JSONObject jObj = new JSONObject(body);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }) {
+
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            protected Response parseNetworkResponse(NetworkResponse response) {
+                return null;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
                 Map<String, String> params = new HashMap<String, String>();
-                if(!token.equals(""))
+                if(token != null)
                     params.put("Authorization", token);
                 return super.getHeaders();
             }
@@ -254,7 +271,32 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+        AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
     }
 
+    public int onStartCommand() {
+        mHandler = new android.os.Handler();
+        setCoords();
+        return START_STICKY;
+    }
+
+    private void setCoords() {
+        try
+        {
+            sendCoordinates("10","12");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        scheduleNext();
+    }
+
+    private void scheduleNext() {
+        mHandler.postDelayed(new Runnable() {
+            public void run()
+            {
+                setCoords();
+            }
+        }, 30000);
+    }
 }

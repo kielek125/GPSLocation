@@ -50,12 +50,12 @@ public class LoginActivity extends AppCompatActivity {
         session = new SessionManager(getApplicationContext());
 
         // Check if user is already logged in or not
-        if (session.isLoggedIn()) {
-            // User is already logged in. Take him to main activity
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
+//        if (session.isLoggedIn()) {
+//            // User is already logged in. Take him to main activity
+//            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+//            startActivity(intent);
+//            finish();
+//        }
 
         // Login button Click Event
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (!error) {
                         session.setLogin(true);
-
+                        session.setToken(jObj.getJSONObject("data").getString("token"));
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
