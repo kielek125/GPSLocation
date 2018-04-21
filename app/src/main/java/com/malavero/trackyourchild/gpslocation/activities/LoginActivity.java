@@ -77,8 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                     checkLogin(email, password);
                 } else {
                     // Prompt user to enter credentials
-                    Toast.makeText(LoginActivity.this,
-                            "Please enter the credentials!", Toast.LENGTH_LONG)
+                    Toast.makeText(LoginActivity.this, getString(R.string.app_invalid_input), Toast.LENGTH_LONG)
                             .show();
                 }
             }
@@ -157,13 +156,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onErrorResponse(VolleyError error)
             {
                 Log.e(TAG, "Login Error: " + error.getMessage());
-//                TODO temporary bypass to login remove when you fix database connection
-
-                Intent intent = new Intent(LoginActivity.this,
-                        MainActivity.class);
-                startActivity(intent);
-                finish();
-
                 Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
             }

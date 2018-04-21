@@ -10,4 +10,17 @@
     <string name="app_service_enable_description">Usługa lokalizacyjna została włączona</string>
     <string name="app_service_disable_description">Usługa lokalizacyjna została wyłączona</string>
     <string name="app_settings">Ustawienia</string>
+    <string name="action_settings">Ustawienia</string>
+    <string name="action_logoff">Wyloguj</string>
+    <string name="app_registration_title">Rejestracja</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Hasło</string>
+    <string name="hint_name">Imię i nazwisko</string>
+    <string name="btn_login">ZALOGUJ</string>
+    <string name="btn_register">ZAREJESTRUJ</string>
+    <string name="btn_link_to_login">Posiadasz konto? Kliknij aby zalogować</string>
+    <string name="btn_link_to_register">Nie posiadasz konta? Kliknij aby zarejestrować</string>
+    <string name="welcome">Witaj</string>
+    <string name="btn_logout">WYLOGUJ</string>
+    <string name="app_invalid_input">Proszę wypełnić wymagane pola</string>
 </resources>
