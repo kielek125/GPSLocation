@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
+                    boolean error = jObj.has("error");
 
                     // Check for error node in json
                     if (!error) {
@@ -125,27 +125,24 @@ public class LoginActivity extends AppCompatActivity {
                         session.setLogin(true);
 
                         // Now store the user in SQLite
-                        String uid = jObj.getString("uid");
+                        //String uid = jObj.getString("uid");
 
-                        JSONObject user = jObj.getJSONObject("user");
-                        String name = user.getString("name");
-                        String email = user.getString("email");
-                        String created_at = user
-                                .getString("created_at");
+                        //JSONObject user = jObj.getJSONObject("user");
+                        //String name = user.getString("name");
+                        //String email = user.getString("email");
+                        //String created_at = user.getString("created_at");
 
                         // Inserting row in users table
-                        db.addUser(name, email, uid, created_at);
+                        //db.addUser(name, email, uid, created_at);
 
                         // Launch main activity
-                        Intent intent = new Intent(LoginActivity.this,
-                                MainActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
                     } else {
                         // Error in login. Get the error message
-                        String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(LoginActivity.this,
-                                errorMsg, Toast.LENGTH_LONG).show();
+                        //String errorMsg = jObj.getString("error_msg");
+                        //Toast.makeText(LoginActivity.this,errorMsg, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     // JSON error

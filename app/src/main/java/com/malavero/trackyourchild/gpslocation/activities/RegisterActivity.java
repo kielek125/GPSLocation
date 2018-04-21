@@ -122,32 +122,30 @@ public class RegisterActivity extends Activity {
 
                 try {
                     JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.getBoolean("error");
+                    boolean error = jObj.has("error");
                     if (!error) {
                         // User successfully stored in MySQL
                         // Now store the user in sqlite
-                        String uid = jObj.getString("uid");
+                        //String uid = jObj.getString("uid");
 
-                        JSONObject user = jObj.getJSONObject("user");
-                        String name = user.getString("name");
-                        String email = user.getString("email");
-                        String created_at = user
-                                .getString("created_at");
+                        //JSONObject user = jObj.getJSONObject("user");
+                        //String name = user.getString("name");
+                        //String email = user.getString("email");
+                        //String created_at = user.getString("created_at");
 
                         // Inserting row in users table
-                        db.addUser(name, email, uid, created_at);
+                        //db.addUser(name, email, uid, created_at);
 
-                        restSender = new RestSender(name, email, password);
-                        restSender.sendDataToServer(); //TODO walidacja czy juz użytkownik istnieje, API zwróci kod błędu jeśli już taki istenieje
-                        Toast.makeText(RegisterActivity.this, "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
+                        //restSender = new RestSender(name, email, password);
+                        //restSender.sendDataToServer(); //TODO walidacja czy juz użytkownik istnieje, API zwróci kod błędu jeśli już taki istenieje
+                        //Toast.makeText(RegisterActivity.this, "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
 
                         // Launch login activity
-                        Intent intent = new Intent(
-                                RegisterActivity.this,
-                                LoginActivity.class);
+                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                         startActivity(intent);
                         finish();
-                    } else {
+                    } else
+                        {
 
                         // Error occurred in registration. Get the error
                         // message
