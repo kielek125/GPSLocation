@@ -1,7 +1,6 @@
 package com.malavero.trackyourchild.gpslocation.services;
 
-public class AppConfig
-{
+public class AppConfig {
     // Server user login url
     public static String URL_LOGIN = "http://geoloc.yorki-dev.com/api/auth/login";
 

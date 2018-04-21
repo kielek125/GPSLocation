@@ -7,7 +7,7 @@
     <string name="app_coordinates_latitude">Szerokość:</string>
     <string name="app_coordinates_longitude">Długość:</string>
     <string name="app_coordinates_altitude">Wysokość:</string>
-    <string name="app_service_enable_description">Usługa lokalizacyjna została włączona</string>
+    <string name="app_service_enable_description">Usługa lokalizacyjna jest włączona</string>
     <string name="app_service_disable_description">Usługa lokalizacyjna została wyłączona</string>
     <string name="app_settings">Ustawienia</string>
     <string name="action_settings">Ustawienia</string>

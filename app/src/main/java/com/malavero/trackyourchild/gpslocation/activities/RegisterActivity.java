@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -56,21 +57,16 @@ public class RegisterActivity extends Activity {
         // Session manager
         session = new SessionManager(getApplicationContext());
 
-        // Check if user is already logged in or not
-        if (session.isLoggedIn()) {
-            // User is already logged in. Take him to main activity
-            Intent intent = new Intent(RegisterActivity.this,
-                    MainActivity.class);
-            startActivity(intent);
-            finish();
-        }
-
         // Register Button Click event
         btnRegister.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 String name = inputFullName.getText().toString().trim();
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
+
+                inputFullName.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                inputEmail.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                inputPassword.onEditorAction(EditorInfo.IME_ACTION_DONE);
 
                 if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty()) {
                     registerUser(name, email, password);
@@ -94,10 +90,11 @@ public class RegisterActivity extends Activity {
         });
 
     }
+
     /**
      * Function to store user in MySQL database will post params(tag, name,
      * email, password) to register url
-     * */
+     */
     private void registerUser(final String name, final String email,
                               final String password) {
         // Tag used to cancel the request
@@ -119,20 +116,16 @@ public class RegisterActivity extends Activity {
                     boolean error = jObj.has("error");
                     if (!error) {
                         Toast.makeText(RegisterActivity.this, "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
-                        Utils.delay(3, new Utils.DelayCallback()
-                        {
+                        Utils.delay(3, new Utils.DelayCallback() {
                             @Override
-                            public void afterDelay()
-                            {
+                            public void afterDelay() {
                                 // Launch login activity
                                 Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                 startActivity(intent);
                                 finish();
                             }
                         });
-                    }
-                    else
-                        {
+                    } else {
                         String errorMsg = jObj.getString("error_msg");
                         Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                     }
@@ -144,24 +137,20 @@ public class RegisterActivity extends Activity {
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error)
-            {
+            public void onErrorResponse(VolleyError error) {
                 String body;
                 String statusCode = String.valueOf(error.networkResponse.statusCode);
                 //get response body and parse with appropriate encoding
-                if(error.networkResponse.data!=null) {
-                    try
-                    {
-                        body = new String(error.networkResponse.data,"UTF-8");
+                if (error.networkResponse.data != null) {
+                    try {
+                        body = new String(error.networkResponse.data, "UTF-8");
                         JSONObject jObj = new JSONObject(body);
                         Log.e(TAG, "Registration Error: " + jObj.get("error"));
                         Toast.makeText(RegisterActivity.this, jObj.get("error").toString(), Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
+                } else {
                     Log.e(TAG, "Unknown Error: " + error.getMessage());
                     Toast.makeText(RegisterActivity.this, "Unknown error", Toast.LENGTH_LONG).show();
                 }

@@ -20,6 +20,7 @@ public class GPSService extends Service {
 
     private LocationListener listener;
     private LocationManager locationManager;
+    private boolean mRunning;
 
     @Nullable
     @Override
@@ -29,8 +30,11 @@ public class GPSService extends Service {
 
     @SuppressLint("MissingPermission")
     @Override
-    public void onCreate() {
-        listener = new LocationListener() {
+    public void onCreate()
+    {
+        mRunning = false;
+        listener = new LocationListener()
+        {
             @Override
             public void onLocationChanged(Location location) {
                 Intent i = new Intent("location_update");
@@ -58,8 +62,18 @@ public class GPSService extends Service {
         locationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 0, listener);
+
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId)
+    {
+        if (!mRunning)
+        {
+            mRunning = true;
+        }
+        return super.onStartCommand(intent, flags, startId);
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();

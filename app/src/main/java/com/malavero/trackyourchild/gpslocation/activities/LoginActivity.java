@@ -6,9 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -17,8 +19,10 @@ import com.malavero.trackyourchild.gpslocation.R;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,12 +54,12 @@ public class LoginActivity extends AppCompatActivity {
         session = new SessionManager(getApplicationContext());
 
         // Check if user is already logged in or not
-//        if (session.isLoggedIn()) {
-//            // User is already logged in. Take him to main activity
-//            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//            startActivity(intent);
-//            finish();
-//        }
+        if (session.isLoggedIn()) {
+            checkLogin(session.getRecentlyLogged(), session.getPassword());
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
 
         // Login button Click Event
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -63,6 +67,11 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
+
+                inputEmail.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                inputPassword.onEditorAction(EditorInfo.IME_ACTION_DONE);
+                session.setRecentlyLogged(email);
+                session.setPassword(password);
 
                 // Check for empty data in the form
                 if (!email.isEmpty() && !password.isEmpty()) {
@@ -89,9 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
     }
-    /**
-     * function to verify login details in mysql db
-     * */
+
     private void checkLogin(final String email, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -127,24 +134,20 @@ public class LoginActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error)
-            {
+            public void onErrorResponse(VolleyError error) {
                 String body;
                 String statusCode = String.valueOf(error.networkResponse.statusCode);
                 //get response body and parse with appropriate encoding
-                if(error.networkResponse.data!=null) {
-                    try
-                    {
-                        body = new String(error.networkResponse.data,"UTF-8");
+                if (error.networkResponse.data != null) {
+                    try {
+                        body = new String(error.networkResponse.data, "UTF-8");
                         JSONObject jObj = new JSONObject(body);
                         Log.e(TAG, "Registration Error: " + jObj.get("error"));
                         Toast.makeText(LoginActivity.this, jObj.get("error").toString(), Toast.LENGTH_LONG).show();
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
+                } else {
                     Log.e(TAG, "Unknown Error: " + error.getMessage());
                     Toast.makeText(LoginActivity.this, "Unknown error", Toast.LENGTH_LONG).show();
                 }
