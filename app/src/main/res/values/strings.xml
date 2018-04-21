@@ -25,5 +25,7 @@
     <string name="btn_logout">LOGOUT</string>
     <string name="app_settings">Settings</string>
     <string name="app_invalid_input">"Please enter the credentials!"</string>
+    <string name="app_registration_successful">"User successfully registered. Try login now!"</string>
+    <string name="app_registration_failed">User already exists. Try to type different email</string>
 
 </resources>

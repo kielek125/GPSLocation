@@ -28,7 +28,7 @@ import com.malavero.trackyourchild.gpslocation.utils.RestSender;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView textView, tv_latitude, tv_longitude, tv_altitude;
+    private TextView textView, tv_latitude, tv_longitude, tv_altitude, tv_status;
     private ToggleButton toggleButton;
     private BroadcastReceiver broadcastReceiver;
     private RestSender restSender;
@@ -48,8 +48,10 @@ public class MainActivity extends AppCompatActivity {
         tv_latitude = (TextView) findViewById(R.id.tv_coordinates_latitude_values);
         tv_longitude = (TextView) findViewById(R.id.tv_coordinates_longitude_values);
         tv_altitude = (TextView) findViewById(R.id.tv_coordinates_altitude_values);
+        tv_status = (TextView) findViewById(R.id.tv_status_info);
 
         toggleButton = (ToggleButton) findViewById(R.id.tb_service);
+
 
         if (!runtimePermission())
             enableToggleButton();
@@ -128,12 +130,14 @@ public class MainActivity extends AppCompatActivity {
                     Intent service = new Intent(getApplicationContext(), GPSService.class);
                     Log.d("service_enabled", "GPS LOCALIZATION HAS BEEN ENABLED");
                     startService(service);
-                    Toast.makeText(MainActivity.this, getString(R.string.app_service_enable_description), Toast.LENGTH_SHORT).show();
+                    tv_status.setText(getString(R.string.app_service_enable_description));
+                    //Toast.makeText(MainActivity.this, getString(R.string.app_service_enable_description), Toast.LENGTH_SHORT).show();
                 } else {
                     Intent service = new Intent(getApplicationContext(), GPSService.class);
                     Log.d("service_disabled", "GPS LOCALIZATION HAS BEEN DISABLED");
                     stopService(service);
-                    Toast.makeText(MainActivity.this, getString(R.string.app_service_disable_description), Toast.LENGTH_SHORT).show();
+                    tv_status.setText(getString(R.string.app_service_disable_description));
+                    //Toast.makeText(MainActivity.this, getString(R.string.app_service_disable_description), Toast.LENGTH_SHORT).show();
                 }
             }
         });

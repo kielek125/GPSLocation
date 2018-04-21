@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import com.android.volley.Request.Method;
 import com.android.volley.Response;
+import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.malavero.trackyourchild.gpslocation.R;
@@ -20,10 +22,12 @@ import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
 import com.malavero.trackyourchild.gpslocation.utils.RestSender;
+import com.malavero.trackyourchild.gpslocation.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +43,7 @@ public class RegisterActivity extends Activity {
     private SessionManager session;
     private SQLiteHandler db;
     private RestSender restSender;
+    private String message;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,20 +143,23 @@ public class RegisterActivity extends Activity {
 
                         //restSender = new RestSender(name, email, password);
                         //restSender.sendDataToServer(); //TODO walidacja czy juz użytkownik istnieje, API zwróci kod błędu jeśli już taki istenieje
-                        //Toast.makeText(RegisterActivity.this, "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
-
-                        // Launch login activity
-                        Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
-                    } else
+                        Toast.makeText(RegisterActivity.this, "User successfully registered. Try login now!", Toast.LENGTH_LONG).show();
+                        Utils.delay(3, new Utils.DelayCallback() {
+                            @Override
+                            public void afterDelay()
+                            {
+                                // Launch login activity
+                                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        });
+                    }
+                    else
                         {
-
-                        // Error occurred in registration. Get the error
-                        // message
+                        // Error occurred in registration. Get the error message
                         String errorMsg = jObj.getString("error_msg");
-                        Toast.makeText(RegisterActivity.this,
-                                errorMsg, Toast.LENGTH_LONG).show();
+                        Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -161,10 +169,27 @@ public class RegisterActivity extends Activity {
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Registration Error: " + error.getMessage());
-                Toast.makeText(RegisterActivity.this,
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+            public void onErrorResponse(VolleyError error)
+            {
+                String body;
+                String statusCode = String.valueOf(error.networkResponse.statusCode);
+                //get response body and parse with appropriate encoding
+                if(error.networkResponse.data!=null) {
+                    try
+                    {
+                        body = new String(error.networkResponse.data,"UTF-8");
+                        JSONObject jObj = new JSONObject(body);
+                        Log.e(TAG, "Registration Error: " + jObj.get("error"));
+                        Toast.makeText(RegisterActivity.this, jObj.get("error").toString(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    Log.e(TAG, "Unknown Error: " + error.getMessage());
+                    Toast.makeText(RegisterActivity.this, "Unknown error", Toast.LENGTH_LONG).show();
+                }
                 hideDialog();
             }
         }) {

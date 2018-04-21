@@ -138,7 +138,8 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();
-                    } else {
+                    } else
+                        {
                         // Error in login. Get the error message
                         //String errorMsg = jObj.getString("error_msg");
                         //Toast.makeText(LoginActivity.this,errorMsg, Toast.LENGTH_LONG).show();
@@ -155,8 +156,25 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error)
             {
-                Log.e(TAG, "Login Error: " + error.getMessage());
-                Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                String body;
+                String statusCode = String.valueOf(error.networkResponse.statusCode);
+                //get response body and parse with appropriate encoding
+                if(error.networkResponse.data!=null) {
+                    try
+                    {
+                        body = new String(error.networkResponse.data,"UTF-8");
+                        JSONObject jObj = new JSONObject(body);
+                        Log.e(TAG, "Registration Error: " + jObj.get("error"));
+                        Toast.makeText(LoginActivity.this, jObj.get("error").toString(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    Log.e(TAG, "Unknown Error: " + error.getMessage());
+                    Toast.makeText(LoginActivity.this, "Unknown error", Toast.LENGTH_LONG).show();
+                }
                 hideDialog();
             }
         }) {
