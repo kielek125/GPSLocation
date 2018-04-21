@@ -54,7 +54,7 @@
                 android:textSize="20sp"
                 android:paddingStart="6dp"
                 android:fontFamily="sans-serif-medium"
-                android:text="lat_val" />
+                android:text="@string/app_coordinates_zero" />
 
         </LinearLayout>
 
@@ -83,7 +83,7 @@
                 android:textSize="20sp"
                 android:paddingStart="6dp"
                 android:fontFamily="sans-serif-medium"
-                android:text="long_val" />
+                android:text="@string/app_coordinates_zero" />
 
 
         </LinearLayout>
@@ -109,7 +109,7 @@
                 android:textSize="20sp"
                 android:paddingStart="6dp"
                 android:fontFamily="sans-serif-medium"
-                android:text="alt_val" />
+                android:text="@string/app_coordinates_zero" />
         </LinearLayout>
     </LinearLayout>
 
@@ -139,7 +139,7 @@
             android:layout_height="wrap_content"
             android:textSize="30sp"
             android:textAlignment="center"
-            android:text="Status"/>
+            android:text="@string/app_service_disable_description"/>
 
 
     </LinearLayout>

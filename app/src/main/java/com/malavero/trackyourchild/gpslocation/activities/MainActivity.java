@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -20,30 +19,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.malavero.trackyourchild.gpslocation.R;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
 import com.malavero.trackyourchild.gpslocation.services.GPSService;
-import com.malavero.trackyourchild.gpslocation.utils.RestSender;
+import com.malavero.trackyourchild.gpslocation.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.app.Service.START_STICKY;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (!runtimePermission())
             enableToggleButton();
+        if(Utils.isMyServiceRunning(GPSService.class, this)){
+            toggleButton.performClick();
+        }
     }
 
     @Override

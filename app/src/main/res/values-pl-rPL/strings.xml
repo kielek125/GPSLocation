@@ -1,26 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GPS Location</string>
-    <string name="app_enable_service">Włącz</string>
-    <string name="app_disable_service">Wyłącz</string>
+    <string name="app_enable_service">Uruchom usługę</string>
+    <string name="app_disable_service">Zatrzymaj usługę</string>
     <string name="app_coordinates_label">Współrzędne:</string>
     <string name="app_coordinates_latitude">Szerokość:</string>
     <string name="app_coordinates_longitude">Długość:</string>
     <string name="app_coordinates_altitude">Wysokość:</string>
-    <string name="app_service_enable_description">Usługa lokalizacyjna została włączona</string>
-    <string name="app_service_disable_description">Usługa lokalizacyjna została wyłączona</string>
-    <string name="app_settings">Ustawienia</string>
+    <string name="app_service_enable_description">Usługa lokalizacyjna jest włączona</string>
+    <string name="app_service_disable_description">Usługa lokalizacyjna jest wyłączona</string>
     <string name="action_settings">Ustawienia</string>
     <string name="action_logoff">Wyloguj</string>
-    <string name="app_registration_title">Obserwuj swoje dziecko</string>
+    <string name="app_registration_title">GPS Location</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Hasło</string>
     <string name="hint_name">Login</string>
-    <string name="btn_login">ZALOGUJ</string>
-    <string name="btn_register">ZAREJESTRUJ</string>
-    <string name="btn_link_to_login">Posiadasz konto? Kliknij aby zalogować</string>
+    <string name="btn_login">Zaloguj</string>
+    <string name="btn_register">Zarejestruj</string>
     <string name="btn_link_to_register">Nie posiadasz konta? Kliknij aby zarejestrować</string>
+    <string name="btn_link_to_login">Posiadasz konto? Kliknij aby zalogować</string>
     <string name="welcome">Witaj</string>
-    <string name="btn_logout">WYLOGUJ</string>
-    <string name="app_invalid_input">Proszę wypełnić wymagane pola</string>
+    <string name="btn_logout">Wyloguj</string>
+    <string name="app_settings">Ustawienia</string>
+    <string name="app_invalid_input">"Proszę wypełnić wymagane pola"</string>
+    <string name="app_registration_successful">"Użytkownik zarejestrowany poprawnie. Zaloguj teraz!"</string>
+    <string name="app_registration_failed">Użytkowni o podanym mailu już istnieje. Podaj inny.</string>
+    <string name="app_coordinates_zero">0</string>
 </resources>
