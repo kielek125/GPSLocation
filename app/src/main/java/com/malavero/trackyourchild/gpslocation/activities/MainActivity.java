@@ -1,7 +1,6 @@
 package com.malavero.trackyourchild.gpslocation.activities;
 
 import android.Manifest;
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +8,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -21,41 +19,31 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.android.volley.AuthFailureError;
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.malavero.trackyourchild.gpslocation.R;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
 import com.malavero.trackyourchild.gpslocation.services.GPSService;
-import com.malavero.trackyourchild.gpslocation.utils.RestSender;
 import com.malavero.trackyourchild.gpslocation.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import static android.app.Service.START_STICKY;
-
 public class MainActivity extends AppCompatActivity {
-
 
     private TextView textView, tv_latitude, tv_longitude, tv_altitude, tv_status;
     private ToggleButton toggleButton;
     private BroadcastReceiver broadcastReceiver;
     private SessionManager session;
     private String token;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,16 +62,11 @@ public class MainActivity extends AppCompatActivity {
         toggleButton = (ToggleButton) findViewById(R.id.tb_service);
         token = session.getToken();
 
-        if (Utils.isMyServiceRunning(GPSService.class, this)) {
-            toggleButton.setChecked(true);
-            tv_status.setText(R.string.app_service_enable_description);
-        } else {
-            toggleButton.setChecked(false);
-            tv_status.setText(R.string.app_service_disable_description);
-        }
-
         if (!runtimePermission())
             enableToggleButton();
+        if(Utils.isMyServiceRunning(GPSService.class, this)){
+            toggleButton.performClick();
+        }
     }
 
     @Override
@@ -107,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                         AsyncTask.execute(new Runnable() {
                             @Override
                             public void run() {
-                                sendCoordinates(s[0], s[1]);
+                                sendCoordinates(s[0],s[1]);
                             }
                         });
                     }
@@ -207,10 +190,12 @@ public class MainActivity extends AppCompatActivity {
             unregisterReceiver(broadcastReceiver);
     }
 
-    private void sendCoordinates(final String longitude, final String latitude) {
+    private void sendCoordinates(final String longitude, final String latitude)
+    {
         String tag_string_req = "req_login";
 
-        StringRequest stringRequest = new StringRequest(Request.Method.PUT, AppConfig.URL_UPDATE, new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest (Request.Method.PUT, AppConfig.URL_UPDATE, new Response.Listener<String>()
+        {
 
             @Override
             public void onResponse(String response) {
@@ -230,16 +215,18 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError error) {
-                //TODO tutaj zwraca nam błąd jeżeli serwer nie odpowiada lub coś tam
+            public void onErrorResponse(VolleyError error)
+            {
                 String body;
                 String statusCode = String.valueOf(error.networkResponse.statusCode);
                 //get response body and parse with appropriate encoding
-                if (error.networkResponse.data != null) {
-                    try {
-                        body = new String(error.networkResponse.data, "UTF-8");
+                if(error.networkResponse.data!=null) {
+                    try
+                    {
+                        body = new String(error.networkResponse.data,"UTF-8");
                         JSONObject jObj = new JSONObject(body);
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -247,9 +234,10 @@ public class MainActivity extends AppCompatActivity {
         }) {
 
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError
+            {
                 Map<String, String> params = new HashMap<String, String>();
-                if (token != null)
+                if(token != null)
                     params.put("Authorization", token);
                 return params;
             }

@@ -6,11 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -19,10 +17,8 @@ import com.malavero.trackyourchild.gpslocation.R;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,10 +51,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // Check if user is already logged in or not
         if (session.isLoggedIn()) {
-            checkLogin(session.getRecentlyLogged(), session.getPassword());
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            // User is already logged in. Take him to main activity
+            checkLogin(session.getEmail(),session.getPassword());
         }
 
         // Login button Click Event
@@ -67,11 +61,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String email = inputEmail.getText().toString().trim();
                 String password = inputPassword.getText().toString().trim();
-
-                inputEmail.onEditorAction(EditorInfo.IME_ACTION_DONE);
-                inputPassword.onEditorAction(EditorInfo.IME_ACTION_DONE);
-                session.setRecentlyLogged(email);
-                session.setPassword(password);
 
                 // Check for empty data in the form
                 if (!email.isEmpty() && !password.isEmpty()) {
@@ -99,6 +88,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * function to verify login details in mysql db
+     */
     private void checkLogin(final String email, final String password) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -120,6 +112,8 @@ public class LoginActivity extends AppCompatActivity {
                     if (!error) {
                         session.setLogin(true);
                         session.setToken(jObj.getJSONObject("data").getString("token"));
+                        session.setEmail(email);
+                        session.setPassword(password);
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                         startActivity(intent);
                         finish();

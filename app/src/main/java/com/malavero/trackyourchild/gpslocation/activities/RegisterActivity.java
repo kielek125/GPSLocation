@@ -19,7 +19,6 @@ import com.malavero.trackyourchild.gpslocation.R;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
-import com.malavero.trackyourchild.gpslocation.utils.RestSender;
 import com.malavero.trackyourchild.gpslocation.utils.Utils;
 
 import org.json.JSONException;
