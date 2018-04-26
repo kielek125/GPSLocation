@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         if(Utils.isMyServiceRunning(GPSService.class, this)){
             toggleButton.performClick();
         }
+        Utils.generateNoteOnFile("DUPA");
     }
 
     @Override
@@ -96,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
-        } catch (Exception ex) {
-
+        } catch (Exception e) {
+            Utils.generateNoteOnFile(e.getMessage());
         }
 
     }
@@ -192,68 +193,72 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendCoordinates(final String longitude, final String latitude)
     {
-        String tag_string_req = "req_login";
+        try {
+            String tag_string_req = "req_login";
 
-        StringRequest stringRequest = new StringRequest (Request.Method.PUT, AppConfig.URL_UPDATE, new Response.Listener<String>()
-        {
-
-            @Override
-            public void onResponse(String response) {
-                try {
-                    JSONObject jObj = new JSONObject(response);
-                    boolean error = jObj.has("error");
-
-                    if (!error) {
-                        token = jObj.get("Authorization").toString();
-                    }
-                } catch (JSONException e) {
-                    // JSON error
-                    e.printStackTrace();
-                }
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error)
+            StringRequest stringRequest = new StringRequest (Request.Method.PUT, AppConfig.URL_UPDATE, new Response.Listener<String>()
             {
-                String body;
-                String statusCode = String.valueOf(error.networkResponse.statusCode);
-                //get response body and parse with appropriate encoding
-                if(error.networkResponse.data!=null) {
-                    try
-                    {
-                        body = new String(error.networkResponse.data,"UTF-8");
-                        JSONObject jObj = new JSONObject(body);
-                    }
-                    catch (Exception e) {
+
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        JSONObject jObj = new JSONObject(response);
+                        boolean error = jObj.has("error");
+
+                        if (!error) {
+                            token = jObj.get("Authorization").toString();
+                        }
+                    } catch (JSONException e) {
+                        // JSON error
                         e.printStackTrace();
                     }
+
                 }
-            }
-        }) {
+            }, new Response.ErrorListener() {
 
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError
-            {
-                Map<String, String> params = new HashMap<String, String>();
-                if(token != null)
-                    params.put("Authorization", token);
-                return params;
-            }
+                @Override
+                public void onErrorResponse(VolleyError error)
+                {
+                    String body;
+                    String statusCode = String.valueOf(error.networkResponse.statusCode);
+                    //get response body and parse with appropriate encoding
+                    if(error.networkResponse.data!=null) {
+                        try
+                        {
+                            body = new String(error.networkResponse.data,"UTF-8");
+                            JSONObject jObj = new JSONObject(body);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }) {
 
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                Map<String, String> params = new HashMap<String, String>();
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError
+                {
+                    Map<String, String> params = new HashMap<String, String>();
+                    if(token != null)
+                        params.put("Authorization", token);
+                    return params;
+                }
 
-                params.put("longitude", longitude);
-                params.put("latitude", latitude);
-                params.put("device_name", Build.ID);
-                return params;
-            }
-        };
+                @Override
+                protected Map<String, String> getParams() {
+                    // Posting parameters to login url
+                    Map<String, String> params = new HashMap<String, String>();
 
-        AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
+                    params.put("longitude", longitude);
+                    params.put("latitude", latitude);
+                    params.put("device_name", Build.ID);
+                    return params;
+                }
+            };
+
+            AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
+        } catch (Exception e) {
+            Utils.generateNoteOnFile(e.getMessage());
+        }
     }
 }
