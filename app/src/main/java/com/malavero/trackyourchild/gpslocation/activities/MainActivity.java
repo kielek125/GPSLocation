@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver broadcastReceiver;
     private SessionManager session;
     private String token;
-
+    private String TAG = "GPS_TAG";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         if(Utils.isMyServiceRunning(GPSService.class, this)){
             toggleButton.performClick();
         }
-        Utils.generateNoteOnFile("DUPA");
+        Utils.generateNoteOnFile("DUPA",this);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 };
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
         } catch (Exception e) {
-            Utils.generateNoteOnFile(e.getMessage());
+            Utils.generateNoteOnFile(e.getMessage(),this);
         }
 
     }
@@ -205,11 +205,14 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject jObj = new JSONObject(response);
                         boolean error = jObj.has("error");
 
-                        if (!error) {
+                        if (!error)
+                        {
                             token = jObj.get("Authorization").toString();
                         }
-                    } catch (JSONException e) {
-                        // JSON error
+                    } catch (JSONException e)
+                    {
+                        Utils.generateNoteOnFile(e.getMessage(),getApplicationContext());
+                        Log.i(TAG,"File generated successfully");
                         e.printStackTrace();
                     }
 
@@ -257,8 +260,11 @@ public class MainActivity extends AppCompatActivity {
             };
 
             AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
-        } catch (Exception e) {
-            Utils.generateNoteOnFile(e.getMessage());
+        } catch (Exception e)
+        {
+
+            Utils.generateNoteOnFile(e.getMessage(),this);
+            Log.i(TAG,"File generated successfully");
         }
     }
 }
