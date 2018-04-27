@@ -25,5 +25,6 @@
     <string name="app_registration_successful">"User successfully registered. Try login now!"</string>
     <string name="app_registration_failed">User already exists. Try to type different email</string>
     <string name="app_coordinates_zero">0</string>
+    <string name="action_save">Save log</string>
 
 </resources>

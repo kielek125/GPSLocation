@@ -51,34 +51,4 @@ public class Utils {
         }
         return false;
     }
-    public static void generateNoteOnFile(String sBody,Context c) {
-        FileOutputStream outputStream ;
-        String filename = "sample.txt";
-        String path = AppConfig.filePath;
-        try
-        {
-            File file = new File(c.getFilesDir(),"/sample.txt");
-            if(!file.exists())
-            {
-                FileOutputStream fOut = c.openFileOutput(filename, MODE_PRIVATE);
-                OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut,StandardCharsets.UTF_8);
-                sBody = Calendar.getInstance().getTime() + System.getProperty("line.separator");
-                myOutWriter.write(sBody);
-                myOutWriter.close();
-            }
-            else
-            {
-                FileOutputStream fOut = c.openFileOutput(filename, MODE_APPEND);
-                OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut,StandardCharsets.UTF_8);
-                sBody = Calendar.getInstance().getTime() + System.getProperty("line.separator");
-                myOutWriter.append(sBody);
-                myOutWriter.close();
-            }
-
-            Log.i(TAG,"File will be created at "+ AppConfig.filePath+"/"+filename);
-        } catch (Exception e) {
-            Log.i(TAG,"Failed to create file");
-            e.printStackTrace();
-        }
-    }
 }

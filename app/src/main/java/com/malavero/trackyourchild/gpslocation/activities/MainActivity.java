@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -26,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.malavero.trackyourchild.gpslocation.R;
+import com.malavero.trackyourchild.gpslocation.helpers.FileManager;
 import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import com.malavero.trackyourchild.gpslocation.services.AppConfig;
 import com.malavero.trackyourchild.gpslocation.services.AppController;
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private SessionManager session;
     private String token;
     private String TAG = "GPS_TAG";
+    private FileManager fM = new FileManager();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +71,13 @@ public class MainActivity extends AppCompatActivity {
         if(Utils.isMyServiceRunning(GPSService.class, this)){
             toggleButton.performClick();
         }
-        Utils.generateNoteOnFile("DUPA",this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        fM.checkPermissionFile(MainActivity.this);
+        fM.saveFile(this);
     }
 
     @Override
@@ -97,8 +107,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
-        } catch (Exception e) {
-            Utils.generateNoteOnFile(e.getMessage(),this);
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
 
     }
@@ -114,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
                 return true;
 
             case R.id.action_logoff:
@@ -129,10 +139,12 @@ public class MainActivity extends AppCompatActivity {
                     finish();
                 }
                 return true;
-
+            case R.id.action_save:
+            {
+                saveLog();
+                return true;
+            }
             default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
@@ -170,17 +182,32 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-
+    public void saveLog() {
+        fM.checkPermissionFile(MainActivity.this);
+        fM.saveFile(this);
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case 100:
+            {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
                     enableToggleButton();
                 else
                     runtimePermission();
-                return;
+                break;
+            }
+            case 5:
+            {
+                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                }
+                else{
+                    Toast.makeText(this, "Nie udało się utworzyć katalogu: ", Toast.LENGTH_LONG).show();
+                }
+            }
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -211,7 +238,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     } catch (JSONException e)
                     {
-                        Utils.generateNoteOnFile(e.getMessage(),getApplicationContext());
                         Log.i(TAG,"File generated successfully");
                         e.printStackTrace();
                     }
@@ -262,8 +288,6 @@ public class MainActivity extends AppCompatActivity {
             AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
         } catch (Exception e)
         {
-
-            Utils.generateNoteOnFile(e.getMessage(),this);
             Log.i(TAG,"File generated successfully");
         }
     }

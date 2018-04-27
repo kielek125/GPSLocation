@@ -26,4 +26,5 @@
     <string name="app_registration_successful">"Użytkownik zarejestrowany poprawnie. Zaloguj teraz!"</string>
     <string name="app_registration_failed">Użytkowni o podanym mailu już istnieje. Podaj inny.</string>
     <string name="app_coordinates_zero">0</string>
+    <string name="app_save">Zapisz log</string>
 </resources>
