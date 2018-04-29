@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Calendar;
 
 /**
  * Created by bkieltyka on 27.04.2018.
@@ -18,37 +19,37 @@ import java.io.OutputStreamWriter;
 
 public class FileManager {
 
-    private final int MEMORY_ACCESS = 5;
-
-    private final String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).toString() + "/Logs";
-
     public void checkPermissionFile(Activity activity) {
         if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
         } else {
-            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, MEMORY_ACCESS);
+            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, AppProperty.MEMORY_ACCESS);
         }
     }
 
-    public void saveFile(Context context) {
+    public void saveFile(Activity activity, Context context, String message) {
 
+        checkPermissionFile(activity);
         createDir(context);
-        createFile(context);
+        createFile(context, message);
+    }
+    public void saveFile(Context context, String message) {
+        createDir(context);
+        createFile(context, message);
     }
 
     private void createDir(Context context) {
-        File folder = new File(path);
+        File folder = new File(AppProperty.path);
         if (!folder.exists())
             try {
                 folder.mkdirs();
             } catch (Exception e) {
-                Toast.makeText(context, "Nie udało się utworzyć katalogu: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "The catalog has not been created: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
     }
 
-    private void createFile(Context context) {
-        boolean mode;
-        File file = new File(path + "/ExceptionsLogs.txt");
+    private void createFile(Context context, String message) {
+        File file = new File(AppProperty.path + AppProperty.fileName);
         if (!file.exists())
             try {
                 file.createNewFile();
@@ -61,11 +62,11 @@ public class FileManager {
         try {
             fout = new FileOutputStream(file, true);
             outWriter = new OutputStreamWriter(fout);
-            outWriter.append("test");
+            outWriter.append(Calendar.getInstance().getTime().toString() + " --- " + message + System.getProperty("line.separator"));
             outWriter.close();
 
         } catch (Exception e) {
-            Toast.makeText(context, "Nie udało się utworzyć pliku: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(context, "The file has not been created: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 

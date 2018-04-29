@@ -74,13 +74,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        fM.checkPermissionFile(MainActivity.this);
-        fM.saveFile(this);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
@@ -109,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
         } catch (Exception e)
         {
-            e.printStackTrace();
+            fM.saveFile(this,this, e.getMessage());
         }
 
     }
@@ -123,30 +116,30 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                return true;
+        try {
+            switch (item.getItemId()) {
+                case R.id.action_settings:
+                    return true;
 
-            case R.id.action_logoff:
-                // User chose the "logoff" action, mark the current item
-                // as a favorite...
-                session = new SessionManager(getApplicationContext());
-                if (session.isLoggedIn()) {
-                    session.setLogin(false);
-                    // User wants to logoff. Take him to login activity
-                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                    finish();
-                }
-                return true;
-            case R.id.action_save:
-            {
-                saveLog();
-                return true;
+                case R.id.action_logoff:
+                    // User chose the "logoff" action, mark the current item
+                    // as a favorite...
+                    session = new SessionManager(getApplicationContext());
+                    if (session.isLoggedIn()) {
+                        session.setLogin(false);
+                        // User wants to logoff. Take him to login activity
+                        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+
             }
-            default:
-                return super.onOptionsItemSelected(item);
-
+        } catch (Exception e) {
+            fM.saveFile(this,this, e.getMessage());
+            return false;
         }
     }
 
@@ -182,10 +175,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    public void saveLog() {
-        fM.checkPermissionFile(MainActivity.this);
-        fM.saveFile(this);
-    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -288,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
             AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
         } catch (Exception e)
         {
-            Log.i(TAG,"File generated successfully");
+            fM.saveFile(this, this, e.getMessage());
         }
     }
 }

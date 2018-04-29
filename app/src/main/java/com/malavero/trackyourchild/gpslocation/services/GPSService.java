@@ -1,6 +1,8 @@
 package com.malavero.trackyourchild.gpslocation.services;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,27 +11,29 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
+import com.malavero.trackyourchild.gpslocation.helpers.AppProperty;
 
+import com.malavero.trackyourchild.gpslocation.helpers.SessionManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,7 +49,7 @@ public class GPSService extends Service {
     private SessionManager session;
     private String token;
     private String TAG = "GPS_TAG";
-    private String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/GPSLogs";
+    private FileManager2 fm = new FileManager2();
 
     @Nullable
     @Override
@@ -93,7 +97,7 @@ public class GPSService extends Service {
 
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, listener);
         } catch (Exception e) {
-            generateNoteOnFile(e.getMessage());
+            fm.saveFile(this,e.getMessage());
         }
 
     }
@@ -114,7 +118,7 @@ public class GPSService extends Service {
             super.onStartCommand(intent, flags, startId);
             return START_STICKY;
         } catch (Exception e) {
-            generateNoteOnFile(e.getMessage());
+            fm.saveFile(this,e.getMessage());
             return START_NOT_STICKY;
         }
     }
@@ -144,7 +148,7 @@ public class GPSService extends Service {
                         }
                     } catch (JSONException e) {
                         // JSON error
-                        e.printStackTrace();
+                        fm.saveFile(getApplicationContext(),e.getMessage());
                     }
 
                 }
@@ -165,7 +169,7 @@ public class GPSService extends Service {
                             JSONObject jObj = new JSONObject(body);
                         }
                         catch (Exception e) {
-                            e.printStackTrace();
+                            fm.saveFile(getApplicationContext(),e.getMessage());
                         }
                     }
                 }
@@ -195,24 +199,53 @@ public class GPSService extends Service {
 
             AppController.getInstance().addToRequestQueue(stringRequest, tag_string_req);
         } catch (Exception e) {
-            generateNoteOnFile(e.getMessage());
+            fm.saveFile(this,e.getMessage());
         }
     }
-    public void generateNoteOnFile(String sBody) {
-        try {
-            File root = new File(filePath);
-            if (!root.exists()) {
-                root.mkdirs();
-            }
-            File gpxfile = new File(filePath + "/GPSLocationLogsException.txt");
-            FileWriter writer = new FileWriter(gpxfile);
-            sBody = sBody + " - " + Calendar.getInstance().getTime() + System.getProperty("line.separator");
-            writer.append(sBody);
-            writer.flush();
-            writer.close();
+    public class FileManager2 {
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        public void checkPermissionFile(Activity activity) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+            } else {
+                ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, AppProperty.MEMORY_ACCESS);
+            }
+        }
+        public void saveFile(Context context, String message) {
+            createDir(context);
+            createFile(context, message);
+        }
+
+        private void createDir(Context context) {
+            File folder = new File(AppProperty.path);
+            if (!folder.exists())
+                try {
+                    folder.mkdirs();
+                } catch (Exception e) {
+                    Toast.makeText(context, "The catalog has not been created: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+        }
+
+        private void createFile(Context context, String message) {
+            File file = new File(AppProperty.path + AppProperty.fileName);
+            if (!file.exists())
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            FileOutputStream fout;
+            OutputStreamWriter outWriter;
+            try {
+                fout = new FileOutputStream(file, true);
+                outWriter = new OutputStreamWriter(fout);
+                outWriter.append(Calendar.getInstance().getTime().toString() + " --- " + message + System.getProperty("line.separator"));
+                outWriter.close();
+
+            } catch (Exception e) {
+                Toast.makeText(context, "The file has not been created: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         }
     }
 }
